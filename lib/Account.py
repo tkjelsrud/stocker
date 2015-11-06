@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import pickle
+import datetime
 from lib.Transaction import Transaction
 
 class Account:
@@ -45,6 +46,8 @@ class Account:
                 
                 t.setProduct(self.getField(row, 'Verdipapir'))
                 t.setType(self.getField(row, 'Transaksjonstype').replace('SALG', 'SELL').replace('KJØPT', 'BUY'))
+                t.setCategory(self.getField(row, 'Instrumenttyp'))
+                t.setDate(datetime.datetime.strptime(self.getField(row, 'Handelsdag'), "%Y-%m-%d").date())
                 
                 print(t.__dict__)
                 
@@ -58,7 +61,7 @@ class Account:
         return None
     
     def getStat(self):
-        stat = {'tr': 0, 'prod': {}}
+        stat = {'tr': 0, 'prod': {}, 'cat': {}}
         
         for i in range(0, len(self.tList)):
             tr = self.getTr(i)
@@ -66,7 +69,9 @@ class Account:
             if(tr.product in stat['prod']):
                 stat['prod'][tr.product]['total'] += (tr.getAdjTotal())
                 stat['prod'][tr.product]['holding'] += (tr.getAdjCount())
+                stat['prod'][tr.product]['fees'] += tr.fee
+                stat['prod'][tr.product]['trades'] += 1
             else:
-                stat['prod'][tr.product] = {'total': tr.getAdjTotal(), 'holding': tr.getAdjCount()}
+                stat['prod'][tr.product] = {'total': tr.getAdjTotal(), 'holding': tr.getAdjCount(), 'fees': tr.fee, 'trades': 1}
         return stat
         

@@ -57,24 +57,45 @@ except Exception:
 if acc.size() > 0:
     print("Søker i %s rader" % (acc.size()))
     
+    try:
+        q = None
+        
+        if len(sys.argv) > 1:
+            prod = sys.argv[1]
+            q = Query(acc)
+        
+        res = q.searchProduct(prod)
+        res.calculate()
+        fTr = res.rList[0]
+        lTr = res.rList[len(res.rList) - 1]
+        
+        print("SEARCH %s" % prod)
+        
+        print("PROD: ".ljust(30) + fTr.product)
+        print("RESULT: ".ljust(30) + str(round(res.total, 2)))
+        print("FEES: ".ljust(30) + str(round(res.fees, 2)) + " (" + str(round((res.fees / res.total) * 100, 2)) + "%)")
+        print("DAYS: ".ljust(30) + str(fTr.date - lTr.date))
+        
+        print("")
+        
+        for i in range(0, len(res.rList)):
+            tr = res.rList[i]
+            print(tr.date.strftime("%d-%m-%Y").ljust(30) + str(round(tr.total, 2)))
+        
+        print("")
+    except Exception as e:
+        print("Except" + e)
+        
     print("PR PRODUKT:")
     stat = acc.getStat()
     
+    print(" ".ljust(30) + "TOTAL".rjust(12) + "FEES".rjust(8) + "TRADES".rjust(8) + "HOLDING".rjust(8))
+    
     for key in stat['prod'].keys():
-        print(key.ljust(30) + str(stat['prod'][key]['total']).ljust(20) + str(stat['prod'][key]['holding']).ljust(10))
+        print(key.ljust(30) + str(round(stat['prod'][key]['total'])).rjust(12) + str(stat['prod'][key]['fees']).rjust(8)+ str(stat['prod'][key]['trades']).rjust(8) + str(stat['prod'][key]['holding']).rjust(8))
     
     
-    q = None
-    
-    if len(sys.argv) > 1:
-        prod = sys.argv[1]
-        q = Query(acc)
-    
-    res = q.searchProduct(prod)
-    res.calculate()
-    
-    print(res.__dict__)
-    
+
 
 else:
     print("Database har %s rader" % (acc.size()))

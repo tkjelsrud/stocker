@@ -10,6 +10,7 @@ class Transaction:
         self.fee = 0.0
         self.product = "" # Name of product/paper
         self.type = "" # BUY, SELL
+        self.category = "" # FUND, STOCK
         self.currency = None
         
         #print("New trans: %s" % id)
@@ -31,12 +32,16 @@ class Transaction:
         self.price = float(price.replace(',', '.').replace(' ', ''))
     
     def setCount(self, count):
-        self.count = float(count.replace(',', '.').replace(' ', ''))
+        self.count = round(float(count.replace(',', '.').replace(' ', '')))
         
     def setFee(self, fee):
-        self.fee = float(fee.replace(',', '.').replace(' ', ''))
+        self.fee = round(float(fee.replace(',', '.').replace(' ', '')))
         
     def setProduct(self, name):
         self.product = name
     def setType(self, type):
         self.type = type
+    def setCategory(self, cat):
+        self.category = cat
+    def setDate(self, dt):
+        self.date = dt
